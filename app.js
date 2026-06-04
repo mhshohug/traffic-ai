@@ -572,52 +572,71 @@ async ()=>{
 const snapshots =
 await getAllSnapshots();
 
+const container =
+document.getElementById(
+"galleryContainer"
+);
+
+const list =
+document.getElementById(
+"galleryList"
+);
+
+container.style.display =
+"block";
+
 if(
 snapshots.length === 0
 ){
 
-alert(
-"No Snapshots Found"
-);
+list.innerHTML =
+"<p>No Snapshots Found</p>";
 
 return;
 
 }
 
-let text =
-"Saved Snapshots\n\n";
+list.innerHTML = "";
 
-snapshots.forEach(
+snapshots.reverse().forEach(
 (item,index)=>{
 
-text +=
+const card =
+document.createElement(
+"div"
+);
 
-"#" +
-(index+1) +
+card.className =
+"gallery-card";
 
-"\nTime : " +
+card.innerHTML =
 
-item.time +
+`
+<img src="${item.image}">
 
-"\nCounts : " +
+<p>
+<b>Time:</b>
+${item.time}
+</p>
 
-item.counts +
+<p>
+<b>Counts:</b>
+${item.counts}
+</p>
 
-"\n\n";
+<button onclick="window.open('${item.image}')">
+View
+</button>
+`;
+
+list.appendChild(
+card
+);
 
 }
 );
 
-alert(
-text
-);
-
-console.log(
-snapshots
-);
-
 };
-
 // ==========================
 // CUSTOM DATASET
 // ==========================

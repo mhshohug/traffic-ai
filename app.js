@@ -206,7 +206,7 @@ ${counts[key]}
 
 if(predictions.length){
 
-detectionsLog.push({
+const detectionData = {
 
 time:
 new Date()
@@ -217,7 +217,17 @@ JSON.stringify(
 counts
 )
 
-});
+};
+
+detectionsLog.push(
+detectionData
+);
+
+// IndexedDB Save
+
+saveDetection(
+detectionData
+);
 
 }
 
@@ -334,6 +344,32 @@ link.click();
 
 URL.revokeObjectURL(
 url
+);
+
+};
+// ==========================
+// HISTORY VIEW
+// ==========================
+
+const historyBtn =
+document.getElementById(
+"historyBtn"
+);
+
+historyBtn.onclick =
+async ()=>{
+
+const data =
+await getAllDetections();
+
+console.log(
+"History",
+data
+);
+
+alert(
+"Saved Records: " +
+data.length
 );
 
 };

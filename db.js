@@ -1,132 +1,263 @@
 // ======================
-// DATABASE
+// TRAFFIC AI DATABASE
 // ======================
 
 let db;
 
-const request =
-indexedDB.open(
-"TrafficAI_DB",
-1
-);
+const request = indexedDB.open("TrafficAI_DB", 2);
 
-request.onupgradeneeded =
-(event)=>{
+// ======================
+// CREATE DATABASE
+// ======================
 
-db =
-event.target.result;
+request.onupgradeneeded = (event) => {
 
-if(
-!db.objectStoreNames.contains(
-"detections"
-)
-){
+    db = event.target.result;
 
-db.createObjectStore(
-"detections",
-{
-keyPath:"id",
-autoIncrement:true
-}
-);
+    // Detection Store
+    if (!db.objectStoreNames.contains("detections")) {
 
-}
+        db.createObjectStore(
+            "detections",
+            {
+                keyPath: "id",
+                autoIncrement: true
+            }
+        );
 
-};
+    }
 
-request.onsuccess =
-(event)=>{
+    // Snapshot Store
+    if (!db.objectStoreNames.contains("snapshots")) {
 
-db =
-event.target.result;
+        db.createObjectStore(
+            "snapshots",
+            {
+                keyPath: "id",
+                autoIncrement: true
+            }
+        );
 
-console.log(
-"Database Ready"
-);
-
-};
-
-request.onerror =
-(event)=>{
-
-console.error(
-"Database Error",
-event
-);
+    }
 
 };
 
 // ======================
-// SAVE DETECTION
+// DATABASE READY
 // ======================
 
-function saveDetection(data){
+request.onsuccess = (event) => {
 
-if(!db) return;
+    db = event.target.result;
 
-const tx =
-db.transaction(
-["detections"],
-"readwrite"
-);
+    console.log(
+        "Traffic AI Database Ready"
+    );
 
-const store =
-tx.objectStore(
-"detections"
-);
+};
 
-store.add(data);
+request.onerror = (event) => {
+
+    console.error(
+        "Database Error",
+        event
+    );
+
+};
+
+// ======================
+// DETECTIONS
+// ======================
+
+function saveDetection(data) {
+
+    if (!db) return;
+
+    const tx =
+        db.transaction(
+            ["detections"],
+            "readwrite"
+        );
+
+    const store =
+        tx.objectStore(
+            "detections"
+        );
+
+    store.add(data);
+
+}
+
+function getAllDetections() {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            if (!db) {
+
+                resolve([]);
+                return;
+
+            }
+
+            const tx =
+                db.transaction(
+                    ["detections"],
+                    "readonly"
+                );
+
+            const store =
+                tx.objectStore(
+                    "detections"
+                );
+
+            const request =
+                store.getAll();
+
+            request.onsuccess = () => {
+
+                resolve(
+                    request.result
+                );
+
+            };
+
+            request.onerror = () => {
+
+                reject(
+                    request.error
+                );
+
+            };
+
+        }
+    );
+
+}
+
+function clearDetections() {
+
+    if (!db) return;
+
+    const tx =
+        db.transaction(
+            ["detections"],
+            "readwrite"
+        );
+
+    const store =
+        tx.objectStore(
+            "detections"
+        );
+
+    store.clear();
 
 }
 
 // ======================
-// GET ALL DETECTIONS
+// SNAPSHOTS
 // ======================
 
-function getAllDetections(){
+function saveSnapshot(data) {
 
-return new Promise(
-(resolve,reject)=>{
+    if (!db) return;
 
-if(!db){
+    const tx =
+        db.transaction(
+            ["snapshots"],
+            "readwrite"
+        );
 
-resolve([]);
-return;
+    const store =
+        tx.objectStore(
+            "snapshots"
+        );
+
+    store.add(data);
 
 }
 
-const tx =
-db.transaction(
-["detections"],
-"readonly"
-);
+function getAllSnapshots() {
 
-const store =
-tx.objectStore(
-"detections"
-);
+    return new Promise(
+        (resolve, reject) => {
 
-const request =
-store.getAll();
+            if (!db) {
 
-request.onsuccess =
-()=>{
+                resolve([]);
+                return;
 
-resolve(
-request.result
-);
+            }
 
-};
+            const tx =
+                db.transaction(
+                    ["snapshots"],
+                    "readonly"
+                );
 
-request.onerror =
-()=>{
+            const store =
+                tx.objectStore(
+                    "snapshots"
+                );
 
-reject(
-request.error
-);
+            const request =
+                store.getAll();
 
-};
+            request.onsuccess = () => {
 
-});
+                resolve(
+                    request.result
+                );
+
+            };
+
+            request.onerror = () => {
+
+                reject(
+                    request.error
+                );
+
+            };
+
+        }
+    );
+
+}
+
+function deleteSnapshot(id) {
+
+    if (!db) return;
+
+    const tx =
+        db.transaction(
+            ["snapshots"],
+            "readwrite"
+        );
+
+    const store =
+        tx.objectStore(
+            "snapshots"
+        );
+
+    store.delete(id);
+
+}
+
+function clearSnapshots() {
+
+    if (!db) return;
+
+    const tx =
+        db.transaction(
+            ["snapshots"],
+            "readwrite"
+        );
+
+    const store =
+        tx.objectStore(
+            "snapshots"
+        );
+
+    store.clear();
 
 }

@@ -568,13 +568,15 @@ data
 
 galleryBtn.onclick =
 async ()=>{
-alert("Gallery Button Working");
+
 const snapshots =
 await getAllSnapshots();
+
 alert(
 "Snapshots Found: " +
 snapshots.length
 );
+  
 const container =
 document.getElementById(
 "galleryContainer"

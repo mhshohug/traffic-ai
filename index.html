@@ -1,82 +1,164 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Traffic AI</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 
 <style>
 body{
-    font-family: Arial;
-    text-align:center;
-    margin:20px;
+  font-family:Arial;
+  text-align:center;
+  margin:10px;
+}
+
+#container{
+  position:relative;
+  display:inline-block;
+  width:100%;
+  max-width:700px;
 }
 
 video{
-    width:100%;
-    max-width:600px;
-    border:2px solid #000;
-    border-radius:10px;
+  width:100%;
+  border-radius:10px;
+}
+
+canvas{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
 }
 
 button{
-    padding:12px 20px;
-    margin:10px;
-    font-size:18px;
+  padding:10px 20px;
+  margin:5px;
+}
+
+#result{
+  margin-top:15px;
+  text-align:left;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Traffic AI Camera</h2>
+<h2>Traffic AI Detector</h2>
 
-<button onclick="startCamera()">
-Start Camera
-</button>
+<button onclick="startCamera()">Start Camera</button>
+<button onclick="stopCamera()">Stop Camera</button>
 
-<button onclick="stopCamera()">
-Stop Camera
-</button>
+<div id="container">
+  <video id="video" autoplay playsinline muted></video>
+  <canvas id="canvas"></canvas>
+</div>
 
-<br>
-
-<video id="video" autoplay playsinline></video>
+<div id="result">Loading AI...</div>
 
 <script>
 
+let model;
 let stream;
+
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+async function loadModel(){
+  model = await cocoSsd.load();
+  document.getElementById("result").innerHTML =
+  "AI Ready";
+}
+
+loadModel();
 
 async function startCamera(){
 
-try{
+  stream =
+  await navigator.mediaDevices.getUserMedia({
+    video:{
+      facingMode:"environment"
+    }
+  });
 
-stream = await navigator.mediaDevices.getUserMedia({
-video:{
-facingMode:"environment"
-}
-});
+  video.srcObject = stream;
 
-document.getElementById("video").srcObject = stream;
+  video.onloadedmetadata = ()=>{
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
-}
-catch(err){
-alert(err);
-}
-
+    detectObjects();
+  };
 }
 
 function stopCamera(){
 
-if(stream){
+  if(stream){
+    stream.getTracks().forEach(track=>track.stop());
+  }
 
-stream.getTracks().forEach(track=>{
-track.stop();
-});
-
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
 }
 
+async function detectObjects(){
+
+  if(!model || !video.srcObject){
+    requestAnimationFrame(detectObjects);
+    return;
+  }
+
+  const predictions =
+  await model.detect(video);
+
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  let text = "";
+
+  predictions.forEach(item=>{
+
+    const [x,y,w,h] = item.bbox;
+
+    ctx.strokeStyle = "lime";
+    ctx.lineWidth = 3;
+
+    ctx.strokeRect(x,y,w,h);
+
+    ctx.fillStyle="lime";
+    ctx.fillText(
+      item.class,
+      x,
+      y > 10 ? y-5 : 10
+    );
+
+    text +=
+    item.class +
+    " (" +
+    Math.round(item.score*100) +
+    "%)<br>";
+  });
+
+  document.getElementById("result").innerHTML =
+  text || "No Object";
+
+  requestAnimationFrame(
+    detectObjects
+  );
 }
 
 </script>

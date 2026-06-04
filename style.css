@@ -122,3 +122,32 @@ h2{
     border-radius:8px;
     border:1px solid #ddd;
 }
+#galleryContainer{
+margin-top:20px;
+background:#fff;
+padding:15px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+.gallery-card{
+border:1px solid #ddd;
+padding:10px;
+margin-bottom:15px;
+border-radius:10px;
+}
+
+.gallery-card img{
+width:100%;
+max-width:300px;
+border-radius:8px;
+margin-bottom:10px;
+}
+
+.gallery-card button{
+padding:8px 12px;
+margin:5px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}

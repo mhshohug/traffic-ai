@@ -11,6 +11,7 @@ let currentCounts = {};
 let trackedObjects = {};
 let nextObjectId = 1;
 let objectDirections = {};
+let objectSpeeds = {};
 
 const video =
 document.getElementById("video");
@@ -196,6 +197,9 @@ for(const id in trackedObjects){
 const old =
 trackedObjects[id];
 
+const currentTime =
+Date.now();  
+  
 const dx =
 old.x - centerX;
 
@@ -272,6 +276,38 @@ objectDirections[
 matchedId
 ] = direction;
 
+const dx =
+centerX - oldObject.x;
+
+const dy =
+centerY - oldObject.y;
+
+const distance =
+Math.sqrt(
+(dx * dx) +
+(dy * dy)
+);
+
+const dt =
+(currentTime -
+(oldObject.time || currentTime))
+/ 1000;
+
+let speed = 0;
+
+if(dt > 0){
+
+speed =
+Math.round(
+(distance / dt) * 0.2
+);
+
+}
+
+objectSpeeds[
+matchedId
+] = speed;  
+  
 }
 
 trackedObjects[
@@ -280,6 +316,7 @@ matchedId
 
 x:centerX,
 y:centerY,
+time:currentTime,
 class:item.class
 
 };  
@@ -323,7 +360,14 @@ matchedId +
 objectDirections[
 matchedId
 ] || ""
-),
+) +
+" " +
+(
+objectSpeeds[
+matchedId
+] || 0
+) +
+" km/h",
 x,
 y > 15 ? y-5 : 15
 );

@@ -8,6 +8,9 @@ let stream;
 let detectionsLog = [];
 let currentCounts = {};
 
+let trackedObjects = {};
+let nextObjectId = 1;
+
 const video =
 document.getElementById("video");
 
@@ -179,6 +182,55 @@ predictions.forEach(item=>{
 const [x,y,w,h] =
 item.bbox;
 
+const centerX =
+x + (w / 2);
+
+const centerY =
+y + (h / 2);
+
+let matchedId =
+null;
+for(const id in trackedObjects){
+
+const old =
+trackedObjects[id];
+
+const dx =
+old.x - centerX;
+
+const dy =
+old.y - centerY;
+
+const distance =
+Math.sqrt(
+dx * dx +
+dy * dy
+);
+
+if(distance < 80){
+
+matchedId = id;
+break;
+
+}
+
+}
+if(!matchedId){
+
+matchedId =
+nextObjectId++;
+
+}
+
+trackedObjects[
+matchedId
+] = {
+
+x:centerX,
+y:centerY,
+class:item.class
+
+};  
 counts[item.class] =
 (
 counts[item.class]
@@ -211,11 +263,11 @@ ctx.font =
 "16px Arial";
 
 ctx.fillText(
-item.class,
+item.class +
+" #" +
+matchedId,
 x,
-y > 15
-? y - 5
-: 15
+y > 15 ? y-5 : 15
 );
 
 });

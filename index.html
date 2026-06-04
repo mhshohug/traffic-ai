@@ -1,1 +1,85 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Traffic AI</title>
+
+<style>
+body{
+    font-family: Arial;
+    text-align:center;
+    margin:20px;
+}
+
+video{
+    width:100%;
+    max-width:600px;
+    border:2px solid #000;
+    border-radius:10px;
+}
+
+button{
+    padding:12px 20px;
+    margin:10px;
+    font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Traffic AI Camera</h2>
+
+<button onclick="startCamera()">
+Start Camera
+</button>
+
+<button onclick="stopCamera()">
+Stop Camera
+</button>
+
+<br>
+
+<video id="video" autoplay playsinline></video>
+
+<script>
+
+let stream;
+
+async function startCamera(){
+
+try{
+
+stream = await navigator.mediaDevices.getUserMedia({
+video:{
+facingMode:"environment"
+}
+});
+
+document.getElementById("video").srcObject = stream;
+
+}
+catch(err){
+alert(err);
+}
+
+}
+
+function stopCamera(){
+
+if(stream){
+
+stream.getTracks().forEach(track=>{
+track.stop();
+});
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

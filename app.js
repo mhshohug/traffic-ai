@@ -13,6 +13,8 @@ let nextObjectId = 1;
 let objectDirections = {};
 let objectSpeeds = {};
 
+let latestObjects = [];
+
 const video =
 document.getElementById("video");
 
@@ -175,7 +177,9 @@ canvas.height
 );
 
 const counts = {};
-
+  
+latestObjects = [];
+  
 let html =
 "<h4>Live Detection</h4>";
 
@@ -319,6 +323,23 @@ time:currentTime,
 class:item.class
 
 };  
+latestObjects.push({
+
+id: matchedId,
+
+type: item.class,
+
+speed:
+objectSpeeds[
+matchedId
+] || 0,
+
+direction:
+objectDirections[
+matchedId
+] || "Stationary"
+
+});
 counts[item.class] =
 (
 counts[item.class]
@@ -458,6 +479,9 @@ counts:
 JSON.stringify(
 currentCounts
 ),
+
+objects:
+latestObjects,
 
 image:
 image
@@ -630,7 +654,41 @@ card.innerHTML =
 
 <p><b>Time:</b> ${item.time || ''}</p>
 
-<p><b>Counts:</b> ${item.counts || ''}</p>
+<p>
+<b>Counts:</b>
+${item.counts}
+</p>
+
+<div>
+
+${
+(item.objects || [])
+.map(obj =>
+
+`
+<p>
+
+<b>${obj.type}</b>
+
+#${obj.id}
+
+|
+
+${obj.speed} km/h
+
+|
+
+${obj.direction}
+
+</p>
+`
+
+)
+.join("")
+
+}
+
+</div>
 
 <button onclick="window.open('${item.image}')">
 View Image

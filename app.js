@@ -568,7 +568,7 @@ data
 
 galleryBtn.onclick =
 async ()=>{
-
+alert("Gallery Button Working");
 const snapshots =
 await getAllSnapshots();
 

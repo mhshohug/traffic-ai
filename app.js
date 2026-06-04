@@ -339,6 +339,11 @@ objectDirections[
 matchedId
 ] || "Stationary"
 
+x: x,
+y: y,
+w: w,
+h: h
+
 });
 counts[item.class] =
 (
@@ -463,6 +468,55 @@ video,
 0,
 0
 );
+snapCtx.font =
+"20px Arial";
+
+snapCtx.fillStyle =
+"red";
+
+snapCtx.strokeStyle =
+"yellow";
+
+snapCtx.lineWidth = 2;
+
+latestObjects.forEach(
+obj=>{
+
+snapCtx.strokeStyle =
+"lime";
+
+snapCtx.lineWidth = 3;
+
+snapCtx.strokeRect(
+obj.x,
+obj.y,
+obj.w,
+obj.h
+);
+
+snapCtx.fillStyle =
+"red";
+
+snapCtx.font =
+"18px Arial";
+
+snapCtx.fillText(
+
+obj.type +
+" #" +
+obj.id +
+" | " +
+obj.speed +
+" km/h",
+
+obj.x,
+obj.y > 20
+? obj.y - 5
+: 20
+
+);
+
+});
 
 const image =
 snapCanvas.toDataURL(

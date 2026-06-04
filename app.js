@@ -192,13 +192,12 @@ y + (h / 2);
 
 let matchedId =
 null;
+const currentTime =
+Date.now();  
 for(const id in trackedObjects){
 
 const old =
 trackedObjects[id];
-
-const currentTime =
-Date.now();  
   
 const dx =
 old.x - centerX;

@@ -566,8 +566,7 @@ data
 // GALLERY
 // ==========================
 
-galleryBtn.onclick =
-async ()=>{
+galleryBtn.onclick = async ()=>{
 
 const snapshots =
 await getAllSnapshots();
@@ -576,7 +575,7 @@ alert(
 "Snapshots Found: " +
 snapshots.length
 );
-  
+
 const container =
 document.getElementById(
 "galleryContainer"
@@ -587,29 +586,37 @@ document.getElementById(
 "galleryList"
 );
 
+if(!container || !list){
+
+alert(
+"Gallery HTML Not Found"
+);
+
+return;
+
+}
+
 container.style.display =
 "block";
+
+list.innerHTML = "";
 
 if(
 snapshots.length === 0
 ){
 
 list.innerHTML =
-"<p>No Snapshots Found</p>";
+"<h3>No Snapshots Found</h3>";
 
 return;
 
 }
 
-list.innerHTML = "";
-
 snapshots.reverse().forEach(
 (item,index)=>{
 
 const card =
-document.createElement(
-"div"
-);
+document.createElement("div");
 
 card.className =
 "gallery-card";
@@ -617,29 +624,26 @@ card.className =
 card.innerHTML =
 
 `
-<img src="${item.image}">
+<h3>Snapshot #${index+1}</h3>
 
-<p>
-<b>Time:</b>
-${item.time}
-</p>
+<img src="${item.image || ''}">
 
-<p>
-<b>Counts:</b>
-${item.counts}
-</p>
+<p><b>Time:</b> ${item.time || ''}</p>
+
+<p><b>Counts:</b> ${item.counts || ''}</p>
 
 <button onclick="window.open('${item.image}')">
-View
+View Image
 </button>
 `;
 
-list.appendChild(
-card
-);
+list.appendChild(card);
 
-}
-);
+});
+
+container.scrollIntoView({
+behavior:"smooth"
+});
 
 };
 // ==========================

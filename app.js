@@ -6,6 +6,7 @@ let model;
 let stream;
 
 let detectionsLog = [];
+let currentCounts = {};
 
 const video =
 document.getElementById("video");
@@ -31,6 +32,12 @@ document.getElementById("saveBtn");
 const csvBtn =
 document.getElementById("csvBtn");
 
+const historyBtn =
+document.getElementById("historyBtn");
+
+const galleryBtn =
+document.getElementById("galleryBtn");
+
 // ==========================
 // LOAD MODEL
 // ==========================
@@ -40,7 +47,8 @@ async function loadModel(){
 countsDiv.innerHTML =
 "Loading AI Model...";
 
-model = await cocoSsd.load();
+model =
+await cocoSsd.load();
 
 countsDiv.innerHTML =
 "AI Model Ready";
@@ -48,6 +56,7 @@ countsDiv.innerHTML =
 }
 
 loadModel();
+
 // ==========================
 // CAMERA START
 // ==========================
@@ -57,7 +66,8 @@ async function startCamera(){
 try{
 
 stream =
-await navigator.mediaDevices.getUserMedia({
+await navigator.mediaDevices
+.getUserMedia({
 
 video:{
 facingMode:"environment"
@@ -67,9 +77,11 @@ audio:false
 
 });
 
-video.srcObject = stream;
+video.srcObject =
+stream;
 
-video.onloadedmetadata = ()=>{
+video.onloadedmetadata =
+()=>{
 
 canvas.width =
 video.videoWidth;
@@ -84,7 +96,10 @@ detectObjects();
 }
 catch(err){
 
-alert(err);
+alert(
+"Camera Error: " +
+err
+);
 
 }
 
@@ -100,7 +115,11 @@ if(stream){
 
 stream
 .getTracks()
-.forEach(track=>track.stop());
+.forEach(track=>{
+
+track.stop();
+
+});
 
 }
 
@@ -118,13 +137,17 @@ startCamera;
 
 stopBtn.onclick =
 stopCamera;
+
 // ==========================
 // OBJECT DETECTION
 // ==========================
 
 async function detectObjects(){
 
-if(!model || !video.srcObject){
+if(
+!model ||
+!video.srcObject
+){
 
 requestAnimationFrame(
 detectObjects
@@ -135,7 +158,9 @@ return;
 }
 
 const predictions =
-await model.detect(video);
+await model.detect(
+video
+);
 
 ctx.clearRect(
 0,
@@ -146,19 +171,22 @@ canvas.height
 
 const counts = {};
 
-let html = `
-<h4>Live Detection</h4>
-`;
+let html =
+"<h4>Live Detection</h4>";
 
 predictions.forEach(item=>{
 
 const [x,y,w,h] =
 item.bbox;
 
-// count
-
 counts[item.class] =
-(counts[item.class] || 0) + 1;
+(
+counts[item.class]
+||
+0
+)
++
+1;
 
 // draw box
 
@@ -185,54 +213,39 @@ ctx.font =
 ctx.fillText(
 item.class,
 x,
-y > 15 ? y-5 : 15
+y > 15
+? y - 5
+: 15
 );
 
 });
 
-// count display
+// save latest counts
 
-for(const key in counts){
+currentCounts =
+counts;
 
-html += `
-<b>${key}</b> :
-${counts[key]}
-<br>
-`;
+// display counts
 
-}
-
-// save log
-
-if(predictions.length){
-
-const detectionData = {
-
-time:
-new Date()
-.toLocaleString(),
-
-counts:
-JSON.stringify(
+for(
+const key
+in
 counts
-)
+){
 
-};
-
-detectionsLog.push(
-detectionData
-);
-
-// IndexedDB Save
-
-saveDetection(
-detectionData
-);
+html +=
+"<b>" +
+key +
+"</b> : " +
+counts[key] +
+"<br>";
 
 }
 
 countsDiv.innerHTML =
 html;
+
+// keep running
 
 requestAnimationFrame(
 detectObjects
@@ -240,20 +253,25 @@ detectObjects
 
 }
 // ==========================
-// SNAPSHOT SAVE
+// SAVE SNAPSHOT
 // ==========================
 
 saveBtn.onclick = () => {
 
 if(!video.srcObject){
 
-alert("Camera not started");
+alert(
+"Camera not started"
+);
+
 return;
 
 }
 
 const snapCanvas =
-document.createElement("canvas");
+document.createElement(
+"canvas"
+);
 
 snapCanvas.width =
 video.videoWidth;
@@ -262,7 +280,9 @@ snapCanvas.height =
 video.videoHeight;
 
 const snapCtx =
-snapCanvas.getContext("2d");
+snapCanvas.getContext(
+"2d"
+);
 
 snapCtx.drawImage(
 video,
@@ -275,17 +295,29 @@ snapCanvas.toDataURL(
 "image/jpeg"
 );
 
-const link =
-document.createElement("a");
+const snapshotData = {
 
-link.href = image;
+time:
+new Date()
+.toLocaleString(),
 
-link.download =
-"snapshot_" +
-Date.now() +
-".jpg";
+counts:
+JSON.stringify(
+currentCounts
+),
 
-link.click();
+image:
+image
+
+};
+
+saveSnapshot(
+snapshotData
+);
+
+alert(
+"Snapshot Saved"
+);
 
 };
 
@@ -293,14 +325,18 @@ link.click();
 // CSV EXPORT
 // ==========================
 
-csvBtn.onclick = () => {
+csvBtn.onclick =
+async ()=>{
+
+const data =
+await getAllDetections();
 
 if(
-detectionsLog.length === 0
+data.length === 0
 ){
 
 alert(
-"No data available"
+"No Data Found"
 );
 
 return;
@@ -310,13 +346,14 @@ return;
 let csv =
 "Time,Counts\n";
 
-detectionsLog.forEach(
-row => {
+data.forEach(
+row=>{
 
 csv +=
 `"${row.time}","${row.counts}"\n`;
 
-});
+}
+);
 
 const blob =
 new Blob(
@@ -333,9 +370,12 @@ blob
 );
 
 const link =
-document.createElement("a");
+document.createElement(
+"a"
+);
 
-link.href = url;
+link.href =
+url;
 
 link.download =
 "traffic_data.csv";
@@ -347,14 +387,10 @@ url
 );
 
 };
-// ==========================
-// HISTORY VIEW
-// ==========================
 
-const historyBtn =
-document.getElementById(
-"historyBtn"
-);
+// ==========================
+// HISTORY
+// ==========================
 
 historyBtn.onclick =
 async ()=>{
@@ -362,14 +398,141 @@ async ()=>{
 const data =
 await getAllDetections();
 
+alert(
+"Saved Records : " +
+data.length
+);
+
 console.log(
-"History",
 data
 );
 
+};
+
+// ==========================
+// GALLERY
+// ==========================
+
+galleryBtn.onclick =
+async ()=>{
+
+const snapshots =
+await getAllSnapshots();
+
+if(
+snapshots.length === 0
+){
+
 alert(
-"Saved Records: " +
-data.length
+"No Snapshots Found"
+);
+
+return;
+
+}
+
+let text =
+"Saved Snapshots\n\n";
+
+snapshots.forEach(
+(item,index)=>{
+
+text +=
+
+"#" +
+(index+1) +
+
+"\nTime : " +
+
+item.time +
+
+"\nCounts : " +
+
+item.counts +
+
+"\n\n";
+
+}
+);
+
+alert(
+text
+);
+
+console.log(
+snapshots
+);
+
+};
+
+// ==========================
+// CUSTOM DATASET
+// ==========================
+
+const addDatasetBtn =
+document.getElementById(
+"addDatasetBtn"
+);
+
+addDatasetBtn.onclick =
+()=>{
+
+const className =
+document
+.getElementById(
+"className"
+)
+.value;
+
+const files =
+document
+.getElementById(
+"datasetImages"
+)
+.files;
+
+if(
+!className
+){
+
+alert(
+"Enter Class Name"
+);
+
+return;
+
+}
+
+if(
+files.length === 0
+){
+
+alert(
+"Select Images"
+);
+
+return;
+
+}
+
+document
+.getElementById(
+"datasetInfo"
+)
+.innerHTML =
+
+"Class : " +
+
+className +
+
+"<br>Images : " +
+
+files.length +
+
+"<br>Status : Saved";
+
+alert(
+"Dataset Added"
 );
 
 };

@@ -337,7 +337,7 @@ matchedId
 direction:
 objectDirections[
 matchedId
-] || "Stationary"
+] || "Stationary",
 
 x: x,
 y: y,

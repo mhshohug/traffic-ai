@@ -10,6 +10,7 @@ let currentCounts = {};
 
 let trackedObjects = {};
 let nextObjectId = 1;
+let objectDirections = {};
 
 const video =
 document.getElementById("video");
@@ -222,6 +223,57 @@ nextObjectId++;
 
 }
 
+const oldObject =
+trackedObjects[
+matchedId
+];
+
+if(oldObject){
+
+let direction =
+"Stationary";
+
+if(centerX >
+oldObject.x + 20){
+
+direction =
+"Left → Right";
+
+}
+else if(
+centerX <
+oldObject.x - 20
+){
+
+direction =
+"Right → Left";
+
+}
+else if(
+centerY >
+oldObject.y + 20
+){
+
+direction =
+"Top → Bottom";
+
+}
+else if(
+centerY <
+oldObject.y - 20
+){
+
+direction =
+"Bottom → Top";
+
+}
+
+objectDirections[
+matchedId
+] = direction;
+
+}
+
 trackedObjects[
 matchedId
 ] = {
@@ -265,7 +317,13 @@ ctx.font =
 ctx.fillText(
 item.class +
 " #" +
-matchedId,
+matchedId +
+" " +
+(
+objectDirections[
+matchedId
+] || ""
+),
 x,
 y > 15 ? y-5 : 15
 );

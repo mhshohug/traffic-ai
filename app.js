@@ -824,6 +824,10 @@ alert(
 
 csvBtn.onclick = ()=>{
 
+alert(
+reportRecords.length
+);
+  
 let summaryHtml = "";
 
 for(const key in analytics){

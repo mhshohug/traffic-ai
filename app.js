@@ -37,8 +37,10 @@ let totalObjectCounts = {};
 let speedStats = {};
 let countedObjects = new Set();
 let recordedObjects = new Set();
-const OBJECT_TIMEOUT =
-10000;
+let analytics = {};
+let speedAnalytics = {};
+let trafficPerMinute = {};
+const OBJECT_TIMEOUT = 10000;
 
 const video =
 document.getElementById("video");
@@ -509,7 +511,61 @@ if(
   recordedObjects.add(
     matchedId
   );
+ const minuteKey =
+new Date()
+.toLocaleTimeString(
+[],
+{
+hour:'2-digit',
+minute:'2-digit'
+}
+);
 
+trafficPerMinute[
+  minuteKey
+] =
+(
+trafficPerMinute[
+  minuteKey
+] || 0
+)
++ 1;
+analytics[item.class] =
+(
+analytics[item.class]
+|| 0
+)
++ 1;
+if(
+  !speedAnalytics[
+    item.class
+  ]
+){
+
+  speedAnalytics[
+    item.class
+  ] = {
+
+    totalSpeed: 0,
+
+    count: 0
+
+  };
+
+}
+
+speedAnalytics[
+  item.class
+].totalSpeed +=
+
+objectSpeeds[
+  matchedId
+] || 0;
+
+speedAnalytics[
+  item.class
+].count++;
+  
   addRecord({
 
     type: item.class,
@@ -586,7 +642,29 @@ y > 15 ? y-5 : 15
 );
 
 });
+const now = Date.now();
 
+for(const id in trackedObjects){
+
+  if(
+    now -
+    trackedObjects[id].time >
+    OBJECT_TIMEOUT
+  ){
+
+    delete trackedObjects[id];
+
+    countedObjects.delete(
+      Number(id)
+    );
+
+    recordedObjects.delete(
+      Number(id)
+    );
+
+  }
+
+}
 // save latest counts
 
 currentCounts =

@@ -618,7 +618,6 @@ url
 );
 
 };
-
 // ==========================
 // HISTORY
 // ==========================
@@ -629,14 +628,40 @@ async ()=>{
 const data =
 await getAllDetections();
 
+if(data.length === 0){
+
 alert(
-"Saved Records : " +
-data.length
+"No History Found"
 );
 
-console.log(
-data
-);
+return;
+
+}
+
+let text =
+"TRAFFIC HISTORY\n\n";
+
+data.forEach(
+(item,index)=>{
+
+text +=
+
+"#" +
+(index+1) +
+
+"\nTime: " +
+
+item.time +
+
+"\nCounts: " +
+
+item.counts +
+
+"\n\n";
+
+});
+
+alert(text);
 
 };
 

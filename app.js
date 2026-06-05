@@ -892,7 +892,7 @@ document.getElementById(
 );
 
 addDatasetBtn.onclick =
-()=>{
+async ()=>{
 
 const className =
 document
@@ -931,7 +931,59 @@ alert(
 return;
 
 }
+  if(!accessToken){
 
+alert(
+"Please Connect Google Drive First"
+);
+
+return;
+
+}
+for(const file of files){
+
+const metadata = {
+
+name: file.name,
+
+parents: [
+"1FVgSP2rYq-1W0aKlH_8z57ZKAlqO187_"
+]
+
+};
+
+const form = new FormData();
+
+form.append(
+"metadata",
+new Blob(
+[JSON.stringify(metadata)],
+{
+type:"application/json"
+}
+)
+);
+
+form.append(
+"file",
+file
+);
+
+await fetch(
+"https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+{
+method:"POST",
+headers:{
+Authorization:
+"Bearer " +
+accessToken
+},
+body:form
+}
+);
+
+}
+  
 document
 .getElementById(
 "datasetInfo"
@@ -949,7 +1001,7 @@ files.length +
 "<br>Status : Saved";
 
 alert(
-"Dataset Added"
+"Dataset Uploaded To Google Drive"
 );
 
 };

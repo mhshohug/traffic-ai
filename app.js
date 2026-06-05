@@ -944,7 +944,7 @@ for(const file of files){
 
 const metadata = {
 
-name: file.name,
+name: className + "_" + file.name,
 
 parents: [
 "1FVgSP2rYq-1W0aKlH_8z57ZKAlqO187_"

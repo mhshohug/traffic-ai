@@ -845,6 +845,13 @@ ${obj.direction}
 <button onclick="window.open('${item.image}')">
 View Image
 </button>
+<button onclick="
+downloadSnapshot(
+'${item.image}'
+)
+">
+📥 Download
+</button>
 `;
 
 list.appendChild(card);
@@ -985,5 +992,24 @@ alert(
 );
 
 location.reload();
+
+};
+window.downloadSnapshot =
+(image)=>{
+
+const link =
+document.createElement(
+"a"
+);
+
+link.href =
+image;
+
+link.download =
+"traffic_snapshot_" +
+Date.now() +
+".jpg";
+
+link.click();
 
 };

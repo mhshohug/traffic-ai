@@ -679,6 +679,37 @@ ${item.time}
 ${item.counts}
 </p>
 
+<div>
+
+${
+(item.objects || [])
+.map(obj =>
+
+`
+<p>
+
+🚗 <b>${obj.type}</b>
+
+#${obj.id}
+
+|
+
+⚡ ${obj.speed} km/h
+
+|
+
+➡️ ${obj.direction}
+
+</p>
+`
+
+)
+.join("")
+
+}
+
+</div>
+
 <button onclick="
 showHistoryImage(
 '${item.image || ""}'

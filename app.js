@@ -680,6 +680,13 @@ ${item.counts}
 </p>
 
 <button onclick="
+showHistoryImage(
+'${item.image || ""}'
+)">
+👁 View Snapshot
+</button>
+
+<button onclick="
 alert('Delete Feature Coming Next');
 ">
 🗑 Delete

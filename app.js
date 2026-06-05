@@ -1054,3 +1054,32 @@ alert(
 location.reload();
 
 };
+googleLoginBtn.onclick =
+async ()=>{
+
+const tokenClient =
+google.accounts.oauth2.initTokenClient({
+
+client_id:
+CLIENT_ID,
+
+scope:
+SCOPES,
+
+callback:
+(tokenResponse)=>{
+
+accessToken =
+tokenResponse.access_token;
+
+alert(
+"Google Drive Connected"
+);
+
+}
+
+});
+
+tokenClient.requestAccessToken();
+
+};

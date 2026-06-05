@@ -829,7 +829,29 @@ reportRecords.length
 );
   
 let summaryHtml = "";
+let recordsHtml = "";
 
+reportRecords.forEach(record=>{
+
+recordsHtml += `
+
+<tr>
+
+<td>${record.time}</td>
+
+<td>${record.type}</td>
+
+<td>${record.id}</td>
+
+<td>${record.speed} km/h</td>
+
+<td>${record.direction}</td>
+
+</tr>
+
+`;
+
+});
 for(const key in analytics){
 
 let avgSpeed = 0;
@@ -897,7 +919,27 @@ ${sessionEndTime}
 ${summaryHtml}
 
 </table>
+<h2>Detailed Records</h2>
 
+<table border="1">
+
+<tr>
+
+<th>Time</th>
+
+<th>Type</th>
+
+<th>ID</th>
+
+<th>Speed</th>
+
+<th>Direction</th>
+
+</tr>
+
+${recordsHtml}
+
+</table>
 </body>
 </html>
 `;

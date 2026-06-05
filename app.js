@@ -628,40 +628,68 @@ async ()=>{
 const data =
 await getAllDetections();
 
-if(data.length === 0){
-
-alert(
-"No History Found"
+const container =
+document.getElementById(
+"historyContainer"
 );
+
+const list =
+document.getElementById(
+"historyList"
+);
+
+container.style.display =
+"block";
+
+list.innerHTML = "";
+
+if(
+data.length === 0
+){
+
+list.innerHTML =
+"<h3>No History Found</h3>";
 
 return;
 
 }
 
-let text =
-"TRAFFIC HISTORY\n\n";
-
-data.forEach(
+data.reverse().forEach(
 (item,index)=>{
 
-text +=
+const card =
+document.createElement(
+"div"
+);
 
-"#" +
-(index+1) +
+card.className =
+"history-card";
 
-"\nTime: " +
+card.innerHTML =
 
-item.time +
+`
+<h4>Record #${index+1}</h4>
 
-"\nCounts: " +
+<p>
+<b>Time:</b>
+${item.time}
+</p>
 
-item.counts +
+<p>
+<b>Counts:</b>
+${item.counts}
+</p>
+`;
 
-"\n\n";
+list.appendChild(
+card
+);
 
 });
 
-alert(text);
+container.scrollIntoView({
+behavior:"smooth"
+});
 
 };
 

@@ -22,16 +22,23 @@ const SCOPES =
 "https://www.googleapis.com/auth/drive.file";
 let model;
 let stream;
-
 let detectionsLog = [];
 let currentCounts = {};
-
 let trackedObjects = {};
 let nextObjectId = 1;
 let objectDirections = {};
 let objectSpeeds = {};
-
 let latestObjects = [];
+let isRecording = false;
+let reportRecords = [];
+let sessionStartTime = null;
+let sessionEndTime = null;
+let totalObjectCounts = {};
+let speedStats = {};
+let countedObjects = new Set();
+let recordedObjects = new Set();
+const OBJECT_TIMEOUT =
+10000;
 
 const video =
 document.getElementById("video");
@@ -158,7 +165,15 @@ checkDriveConnection();
 // ==========================
 
 async function startCamera(){
+isRecording = true;
 
+reportRecords = [];
+
+totalObjectCounts = {};
+
+speedStats = {};
+
+sessionStartTime = new Date();
 try{
 
 stream =
@@ -206,7 +221,9 @@ err
 // ==========================
 
 function stopCamera(){
+isRecording = false;
 
+sessionEndTime = new Date();
 if(stream){
 
 stream
@@ -233,7 +250,25 @@ startCamera;
 
 stopBtn.onclick =
 stopCamera;
+function addRecord(obj){
 
+  reportRecords.push({
+
+    time: new Date().toLocaleString(),
+
+    type: obj.type,
+
+    id: obj.id,
+
+    speed: obj.speed,
+
+    direction: obj.direction,
+
+    thumbnail: obj.thumbnail || ""
+
+  });
+
+}
 // ==========================
 // OBJECT DETECTION
 // ==========================
@@ -412,6 +447,36 @@ time:currentTime,
 class:item.class
 
 };  
+ const cropCanvas =
+document.createElement("canvas");
+
+cropCanvas.width = w;
+
+cropCanvas.height = h;
+
+const cropCtx =
+cropCanvas.getContext("2d");
+
+cropCtx.drawImage(
+
+video,
+
+x,
+y,
+w,
+h,
+
+0,
+0,
+w,
+h
+
+);
+
+const cropImage =
+cropCanvas.toDataURL(
+"image/jpeg"
+);
 latestObjects.push({
 
 id: matchedId,
@@ -427,13 +492,47 @@ direction:
 objectDirections[
 matchedId
 ] || "Stationary",
-
+thumbnail:
+cropImage,
 x: x,
 y: y,
 w: w,
 h: h
 
 });
+
+if(
+  isRecording &&
+  !recordedObjects.has(matchedId)
+){
+
+  recordedObjects.add(
+    matchedId
+  );
+
+  addRecord({
+
+    type: item.class,
+
+    id: matchedId,
+
+    speed:
+      objectSpeeds[
+        matchedId
+      ] || 0,
+
+    direction:
+      objectDirections[
+        matchedId
+      ] || "Stationary",
+
+    thumbnail:
+      cropImage
+
+  });
+
+}
+  
 counts[item.class] =
 (
 counts[item.class]

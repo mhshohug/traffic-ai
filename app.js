@@ -2,6 +2,7 @@
 // VARIABLES
 // ==========================
 
+let accessToken = null;
 let model;
 let stream;
 

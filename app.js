@@ -101,6 +101,57 @@ countsDiv.innerHTML =
 }
 
 loadModel();
+async function checkDriveConnection() {
+
+  if (!accessToken) {
+    showDisconnected();
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      "https://www.googleapis.com/drive/v3/about?fields=user",
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken
+        }
+      }
+    );
+
+    if (!res.ok) throw new Error();
+
+    googleLoginBtn.innerHTML =
+      "✅ Drive Connected";
+
+    googleLoginBtn.style.background =
+      "green";
+
+    googleLoginBtn.style.color =
+      "white";
+
+  } catch (e) {
+
+    localStorage.removeItem("drive_token");
+    accessToken = null;
+
+    showDisconnected();
+  }
+}
+
+function showDisconnected() {
+
+  googleLoginBtn.innerHTML =
+    "❌ Drive Disconnected";
+
+  googleLoginBtn.style.background =
+    "red";
+
+  googleLoginBtn.style.color =
+    "white";
+}
+
+checkDriveConnection();
 
 // ==========================
 // CAMERA START
@@ -1013,6 +1064,21 @@ body:form
 }
 );
 
+if (response.status === 401) {
+
+  localStorage.removeItem("drive_token");
+
+  accessToken = null;
+
+  showDisconnected();
+
+  alert(
+    "Google Drive Disconnected"
+  );
+
+  return;
+}
+  
 const result =
 await response.json();
 
@@ -1163,6 +1229,19 @@ accessToken
 }
 );
 
+if (search.status === 401) {
+
+  localStorage.removeItem("drive_token");
+
+  accessToken = null;
+
+  showDisconnected();
+
+  throw new Error(
+    "Drive Disconnected"
+  );
+}
+  
 const searchResult =
 await search.json();
 

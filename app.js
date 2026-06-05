@@ -966,14 +966,18 @@ alert(
 return;
 
 }
+const folderId =
+await getOrCreateFolder(
+className
+);
 for(const file of files){
 
 const metadata = {
 
-name: className + "_" + file.name,
+name: file.name,
 
 parents: [
-"1FVgSP2rYq-1W0aKlH_8z57ZKAlqO187_"
+folderId
 ]
 
 };
@@ -1140,6 +1144,70 @@ alert(
 location.reload();
 
 };
+async function getOrCreateFolder(
+folderName
+){
+
+const searchUrl =
+`https://www.googleapis.com/drive/v3/files?q=name='${folderName}' and mimeType='application/vnd.google-apps.folder' and '1FVgSP2rYq-1W0aKlH_8z57ZKAlqO187_' in parents and trashed=false`;
+
+const search =
+await fetch(
+searchUrl,
+{
+headers:{
+Authorization:
+"Bearer " +
+accessToken
+}
+}
+);
+
+const searchResult =
+await search.json();
+
+if(
+searchResult.files &&
+searchResult.files.length > 0
+){
+
+return searchResult.files[0].id;
+
+}
+
+const create =
+await fetch(
+"https://www.googleapis.com/drive/v3/files",
+{
+method:"POST",
+headers:{
+Authorization:
+"Bearer " +
+accessToken,
+"Content-Type":
+"application/json"
+},
+body:JSON.stringify({
+
+name: folderName,
+
+mimeType:
+"application/vnd.google-apps.folder",
+
+parents:[
+"1FVgSP2rYq-1W0aKlH_8z57ZKAlqO187_"
+]
+
+})
+}
+);
+
+const createResult =
+await create.json();
+
+return createResult.id;
+
+}
 googleLoginBtn.onclick =
 async ()=>{
 

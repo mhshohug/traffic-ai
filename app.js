@@ -666,7 +666,6 @@ card.className =
 "history-card";
 
 card.innerHTML =
-
 `
 <h4>Record #${index+1}</h4>
 
@@ -679,6 +678,12 @@ ${item.time}
 <b>Counts:</b>
 ${item.counts}
 </p>
+
+<button onclick="
+alert('Delete Feature Coming Next');
+">
+🗑 Delete
+</button>
 `;
 
 list.appendChild(

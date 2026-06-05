@@ -859,7 +859,73 @@ summaryHtml +=
 
 }
 
-alert("Step 1 OK");
+const html = `
+<html>
+<head>
+<title>Traffic Report</title>
+</head>
+<body>
+
+<h1>🚦 Traffic Analysis Report</h1>
+
+<p>
+<b>Start:</b>
+${sessionStartTime}
+</p>
+
+<p>
+<b>End:</b>
+${sessionEndTime}
+</p>
+
+<table border="1">
+
+<tr>
+
+<th>Type</th>
+
+<th>Total Count</th>
+
+<th>Average Speed</th>
+
+</tr>
+
+${summaryHtml}
+
+</table>
+
+</body>
+</html>
+`;
+
+const blob =
+new Blob(
+[html],
+{
+type:"text/html"
+}
+);
+
+const url =
+URL.createObjectURL(
+blob
+);
+
+const a =
+document.createElement(
+"a"
+);
+
+a.href = url;
+
+a.download =
+"traffic_report.html";
+
+a.click();
+
+URL.revokeObjectURL(
+url
+);
 
 };
 // ==========================

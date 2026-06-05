@@ -3,6 +3,12 @@
 // ==========================
 
 let accessToken = null;
+
+const CLIENT_ID =
+"616243778605-pff18o9lia7lkk6egiohhvra1dsp6o26.apps.googleusercontent.com";
+
+const SCOPES =
+"https://www.googleapis.com/auth/drive.file";
 let model;
 let stream;
 

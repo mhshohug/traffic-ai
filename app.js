@@ -963,3 +963,25 @@ e.target.style.display =
 
 }
 );
+window.deleteHistoryRecord =
+async (id)=>{
+
+if(
+!confirm(
+"Delete this record?"
+)
+){
+
+return;
+
+}
+
+deleteDetection(id);
+
+alert(
+"Record Deleted"
+);
+
+location.reload();
+
+};

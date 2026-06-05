@@ -626,7 +626,7 @@ historyBtn.onclick =
 async ()=>{
 
 const data =
-await getAllDetections();
+await getAllSnapshots();
 
 const container =
 document.getElementById(
@@ -852,6 +852,13 @@ downloadSnapshot(
 ">
 📥 Download
 </button>
+<button onclick="
+deleteGallerySnapshot(
+${item.id}
+)
+">
+🗑 Delete
+</button>
 `;
 
 list.appendChild(card);
@@ -985,7 +992,7 @@ return;
 
 }
 
-deleteDetection(id);
+deleteSnapshot(id);
 
 alert(
 "Record Deleted"
@@ -1011,5 +1018,27 @@ Date.now() +
 ".jpg";
 
 link.click();
+
+};
+window.deleteGallerySnapshot =
+(id)=>{
+
+if(
+!confirm(
+"Delete this snapshot?"
+)
+){
+
+return;
+
+}
+
+deleteSnapshot(id);
+
+alert(
+"Snapshot Deleted"
+);
+
+location.reload();
 
 };

@@ -1124,8 +1124,17 @@ callback:
 accessToken =
 tokenResponse.access_token;
 
+googleLoginBtn.innerHTML =
+"✅ Drive Connected";
+
+googleLoginBtn.style.background =
+"green";
+
+googleLoginBtn.style.color =
+"white";
+
 alert(
-"Google Drive Connected"
+"Google Drive Connected Successfully"
 );
 
 }

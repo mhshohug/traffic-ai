@@ -166,3 +166,10 @@ margin-bottom:15px;
 border-radius:10px;
 text-align:left;
 }
+.history-card button{
+padding:8px 12px;
+margin-top:10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}

@@ -52,6 +52,11 @@ document.getElementById("historyBtn");
 const galleryBtn =
 document.getElementById("galleryBtn");
 
+const googleLoginBtn =
+document.getElementById(
+"googleLoginBtn"
+);
+
 // ==========================
 // LOAD MODEL
 // ==========================

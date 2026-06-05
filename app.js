@@ -822,66 +822,44 @@ alert(
 // CSV EXPORT
 // ==========================
 
-csvBtn.onclick =
-async ()=>{
+csvBtn.onclick = ()=>{
 
-const data =
-await getAllDetections();
+let summaryHtml = "";
 
-if(
-data.length === 0
-){
+for(const key in analytics){
 
-alert(
-"No Data Found"
+let avgSpeed = 0;
+
+if(speedAnalytics[key]){
+
+avgSpeed = Math.round(
+
+speedAnalytics[key].totalSpeed /
+
+Math.max(
+1,
+speedAnalytics[key].count
+)
+
 );
-
-return;
 
 }
 
-let csv =
-"Time,Counts\n";
+summaryHtml +=
 
-data.forEach(
-row=>{
+`<tr>
 
-csv +=
-`"${row.time}","${row.counts}"\n`;
+<td>${key}</td>
+
+<td>${analytics[key]}</td>
+
+<td>${avgSpeed} km/h</td>
+
+</tr>`;
 
 }
-);
 
-const blob =
-new Blob(
-[csv],
-{
-type:
-"text/csv"
-}
-);
-
-const url =
-URL.createObjectURL(
-blob
-);
-
-const link =
-document.createElement(
-"a"
-);
-
-link.href =
-url;
-
-link.download =
-"traffic_data.csv";
-
-link.click();
-
-URL.revokeObjectURL(
-url
-);
+alert("Step 1 OK");
 
 };
 // ==========================

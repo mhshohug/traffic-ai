@@ -969,6 +969,7 @@ form.append(
 file
 );
 
+const response =
 await fetch(
 "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
 {
@@ -980,6 +981,13 @@ accessToken
 },
 body:form
 }
+);
+
+const result =
+await response.json();
+
+alert(
+JSON.stringify(result)
 );
 
 }

@@ -3,6 +3,17 @@
 // ==========================
 
 let accessToken = null;
+const savedToken =
+localStorage.getItem(
+"drive_token"
+);
+
+if(savedToken){
+
+accessToken =
+savedToken;
+
+}
 
 const CLIENT_ID =
 "616243778605-pff18o9lia7lkk6egiohhvra1dsp6o26.apps.googleusercontent.com";
@@ -56,6 +67,21 @@ const googleLoginBtn =
 document.getElementById(
 "googleLoginBtn"
 );
+if(savedToken){
+
+accessToken =
+savedToken;
+
+googleLoginBtn.innerHTML =
+"✅ Drive Connected";
+
+googleLoginBtn.style.background =
+"green";
+
+googleLoginBtn.style.color =
+"white";
+
+}
 
 // ==========================
 // LOAD MODEL
@@ -1132,6 +1158,20 @@ callback:
 accessToken =
 tokenResponse.access_token;
 
+localStorage.setItem(
+"drive_token",
+accessToken
+);
+
+googleLoginBtn.innerHTML =
+"✅ Drive Connected";
+
+googleLoginBtn.style.background =
+"green";
+
+googleLoginBtn.style.color =
+"white";
+  
 googleLoginBtn.innerHTML =
 "✅ Drive Connected";
 

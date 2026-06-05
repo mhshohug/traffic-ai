@@ -887,3 +887,41 @@ alert(
 );
 
 };
+
+
+window.showHistoryImage =
+(image)=>{
+
+const preview =
+document.getElementById(
+"historyPreview"
+);
+
+const img =
+document.getElementById(
+"historyPreviewImg"
+);
+
+img.src = image;
+
+preview.style.display =
+"block";
+
+};
+
+document.addEventListener(
+"click",
+(e)=>{
+
+if(
+e.target.id ===
+"historyPreview"
+){
+
+e.target.style.display =
+"none";
+
+}
+
+}
+);

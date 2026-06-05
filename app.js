@@ -718,7 +718,9 @@ showHistoryImage(
 </button>
 
 <button onclick="
-alert('Delete Feature Coming Next');
+deleteHistoryRecord(
+${item.id}
+)
 ">
 🗑 Delete
 </button>
